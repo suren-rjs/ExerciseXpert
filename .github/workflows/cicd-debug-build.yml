@@ -1,0 +1,69 @@
+name: Flutter
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  code-analysis-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.0'
+          channel: 'stable'
+
+      - name: Flutter Version
+        run: flutter --version
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+  build-and-upload:
+    needs: code-analysis-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.10'
+          channel: 'stable'
+
+      - name: Flutter Version
+        run: flutter --version
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Build apk
+        run: flutter build apk --no-sound-null-safety
+
+      - name: Verify APK Build
+        run: |
+          if [ ! -f "/home/runner/work/ExerciseXpert/ExerciseXpert/build/app/outputs/flutter-apk/app-release.apk" ]; then
+            echo "Error: APK not found at the specified path."
+            exit 1
+          fi
+          echo "APK build verification successful."
+      - name: Upload Build apk to G-Drive
+        uses: Jumbo810/Upload_Github_Artifacts_TO_GDrive@v1.1.1
+        with:
+          target: /home/runner/work/ExerciseXpert/ExerciseXpert/build/app/outputs/flutter-apk/app-release.apk
+          credentials: ${{ secrets.DRIVE_CREDENTIALS }}
+          parent_folder_id: ${{ secrets.DRIVE_FOLDER_ID }}
