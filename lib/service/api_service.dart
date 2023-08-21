@@ -64,6 +64,7 @@ class _ApiService {
       utils.alertUser(error.message);
       if (error.message == "You are not subscribed to this API.") {
         await secureStorage.delete("flash");
+        await secureStorage.delete("customApiKey");
       }
       log('Exception : $e');
     }
@@ -100,6 +101,7 @@ class _ApiService {
       utils.alertUser(error.message);
       if (error.message == "You are not subscribed to this API.") {
         await secureStorage.delete("flash");
+        await secureStorage.delete("customApiKey");
       }
       log('Exception : $e');
     }

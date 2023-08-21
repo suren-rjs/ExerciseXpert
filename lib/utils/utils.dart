@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:exercise_expert/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 _Utils utils = _Utils.instance;
 
@@ -9,6 +12,15 @@ class _Utils {
 
   static final _Utils instance = _Utils._();
   DateTime? _backButtonPressTime;
+
+  Future<bool> checkInternetConnectivity() async {
+    try {
+      final response = await http.get(Uri.parse('https://www.google.com'));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 
   String capitalizeEveryWord(String sentence) {
     if (sentence.isEmpty) {
@@ -39,7 +51,7 @@ class _Utils {
       );
       return false;
     }
-    return true;
+    exit(0);
   }
 
   SizedBox customSpacer(BuildContext context, double value) =>

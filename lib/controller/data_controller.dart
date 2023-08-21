@@ -1,10 +1,12 @@
 import 'package:exercise_expert/model/exercises.dart';
 import 'package:exercise_expert/service/api_service.dart';
+import 'package:exercise_expert/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DataController extends GetxController {
-  bool isLoading = false;
+  bool isLoading = true;
+  bool isEstablishedConnection = true;
   final TextEditingController searchController = TextEditingController();
   List<Exercise> _allWorkouts = [];
   List<Exercise> filteredWorkouts = [];
@@ -33,10 +35,22 @@ class DataController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    updateExercises();
+    updateConnection();
+  }
+
+  updateExercises() async {
     startLoading();
     _allWorkouts = await apiService.getAllExercises();
     filteredWorkouts = _allWorkouts;
     stopLoading();
+  }
+
+  updateConnection() async {
+    isEstablishedConnection = await utils.checkInternetConnectivity();
+    update();
+    await Future.delayed(const Duration(minutes: 1));
+    updateConnection();
   }
 
   search() async {

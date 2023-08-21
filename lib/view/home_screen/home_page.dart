@@ -1,7 +1,9 @@
 import 'package:exercise_expert/controller/data_controller.dart';
 import 'package:exercise_expert/utils/utils.dart';
+import 'package:exercise_expert/view/connectivity/no-internet.dart';
 import 'package:exercise_expert/view/global_widgets/search_box.dart';
 import 'package:exercise_expert/view/home_screen/widgets/body_parts_container.dart';
+import 'package:exercise_expert/view/splash_screen/splash_loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -25,16 +27,20 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: GetBuilder<DataController>(
           init: Get.find<DataController>(),
+          initState: (state) => Get.find<DataController>().updateExercises(),
           builder: (controller) {
+            if(controller.isLoading) return const Loading();
             return WillPopScope(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: const [
-                    SearchBox(),
-                    BodyPartsContainer(),
-                  ],
-                ),
-              ),
+              child: controller.isEstablishedConnection
+                  ? SingleChildScrollView(
+                      child: Column(
+                        children: const [
+                          SearchBox(),
+                          BodyPartsContainer(),
+                        ],
+                      ),
+                    )
+                  : const NoInternet(),
               onWillPop: () async {
                 try {
                   FocusManager.instance.primaryFocus?.unfocus();
