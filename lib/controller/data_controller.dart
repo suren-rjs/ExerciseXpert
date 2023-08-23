@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 class DataController extends GetxController {
   bool isLoading = true;
   bool isEstablishedConnection = true;
+  String _lastSearch = "";
   final TextEditingController searchController = TextEditingController();
   List<Exercise> _allWorkouts = [];
   List<Exercise> filteredWorkouts = [];
@@ -31,6 +32,7 @@ class DataController extends GetxController {
     List<Exercise> searchFilteredList = await search();
     filteredWorkouts.clear();
     _numOfPages = searchFilteredList.length ~/ 10;
+    if (_numOfPages == 0) _numOfPages = 1;
     try {
       int minElementNumber = ((_currentPage - 1) * 10);
       int maxElementNumber = (_currentPage * 10);
@@ -86,6 +88,10 @@ class DataController extends GetxController {
 
   Future<List<Exercise>> search() async {
     String value = searchController.text.toLowerCase();
+    if (value != _lastSearch) {
+      _lastSearch = searchController.text;
+      _currentPage = 1;
+    }
     return _allWorkouts
         .where((element) =>
             element.name.contains(value) ||
