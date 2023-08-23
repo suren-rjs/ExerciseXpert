@@ -3,14 +3,9 @@ import 'package:exercise_expert/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SearchBox extends StatefulWidget {
+class SearchBox extends StatelessWidget {
   const SearchBox({super.key});
 
-  @override
-  State<SearchBox> createState() => _SearchBoxState();
-}
-
-class _SearchBoxState extends State<SearchBox> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<DataController>(
@@ -22,7 +17,7 @@ class _SearchBoxState extends State<SearchBox> {
           // Use a Material design search bar
           child: TextField(
             controller: controller.searchController,
-            onChanged: (value) => controller.search(),
+            onChanged: (value) => controller.setPage(controller.currentPage),
             cursorColor: appColors.lavenderGrey80,
             autofocus: false,
             decoration: InputDecoration(
@@ -33,10 +28,7 @@ class _SearchBoxState extends State<SearchBox> {
                 disabledColor: appColors.lavenderGrey80,
                 highlightColor: appColors.lavenderGrey80,
                 icon: const Icon(Icons.clear),
-                onPressed: () {
-                  controller.searchController.clear();
-                  controller.clear();
-                },
+                onPressed: () => controller.clear(),
               ),
               prefixIcon: IconButton(
                 color: appColors.lavenderGrey80,

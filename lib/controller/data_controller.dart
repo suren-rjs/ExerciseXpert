@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:exercise_expert/model/exercises.dart';
 import 'package:exercise_expert/service/api_service.dart';
 import 'package:exercise_expert/utils/utils.dart';
@@ -10,6 +12,36 @@ class DataController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   List<Exercise> _allWorkouts = [];
   List<Exercise> filteredWorkouts = [];
+
+  final int _visiblePages = 3;
+
+  int _currentPage = 1;
+
+  int _numOfPages = 0;
+
+  int get numOfPages => _numOfPages;
+
+  int get currentPage => _currentPage;
+
+  int get visiblePages => _visiblePages;
+
+  Future<void> setPage(int value) async {
+    startLoading();
+    _currentPage = value;
+    List<Exercise> searchFilteredList = await search();
+    filteredWorkouts.clear();
+    _numOfPages = searchFilteredList.length ~/ 10;
+    try {
+      int minElementNumber = ((_currentPage - 1) * 10);
+      int maxElementNumber = (_currentPage * 10);
+      for (int index = minElementNumber; index < maxElementNumber; index++) {
+        filteredWorkouts.add(searchFilteredList[index]);
+      }
+    } catch (e) {
+      log("Exception : " + e.toString());
+    }
+    stopLoading();
+  }
 
   Exercise? exercise;
 
@@ -35,14 +67,13 @@ class DataController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    updateExercises();
+    await updateExercises().then((value) => setPage(_currentPage));
     updateConnection();
   }
 
-  updateExercises() async {
+  Future updateExercises() async {
     startLoading();
     _allWorkouts = await apiService.getAllExercises();
-    filteredWorkouts = _allWorkouts;
     stopLoading();
   }
 
@@ -53,22 +84,20 @@ class DataController extends GetxController {
     updateConnection();
   }
 
-  search() async {
-    startLoading();
+  Future<List<Exercise>> search() async {
     String value = searchController.text.toLowerCase();
-    filteredWorkouts = _allWorkouts
+    return _allWorkouts
         .where((element) =>
             element.name.contains(value) ||
             element.target.contains(value) ||
             element.bodyPart.contains(value))
         .toList();
-    stopLoading();
   }
 
   clear() async {
     startLoading();
     searchController.clear();
-    filteredWorkouts = _allWorkouts;
+    setPage(_currentPage);
     stopLoading();
   }
 

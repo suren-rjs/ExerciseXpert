@@ -8,11 +8,11 @@ import 'package:get/get.dart';
 class ExerciseContainer extends StatelessWidget {
   const ExerciseContainer({
     Key? key,
-    required this.bodyPart,
+    // required this.bodyPart,
     required this.targetedWorkouts,
   }) : super(key: key);
 
-  final String bodyPart;
+  // final String bodyPart;
   final List<Exercise> targetedWorkouts;
 
   @override

@@ -1,4 +1,5 @@
 import 'package:exercise_expert/controller/data_controller.dart';
+import 'package:exercise_expert/utils/app_colors.dart';
 import 'package:exercise_expert/utils/utils.dart';
 import 'package:exercise_expert/view/connectivity/no-internet.dart';
 import 'package:exercise_expert/view/global_widgets/search_box.dart';
@@ -6,6 +7,7 @@ import 'package:exercise_expert/view/home_screen/widgets/body_parts_container.da
 import 'package:exercise_expert/view/splash_screen/splash_loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pagination_flutter/pagination.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,9 +36,20 @@ class _HomePageState extends State<HomePage> {
               child: controller.isEstablishedConnection
                   ? SingleChildScrollView(
                       child: Column(
-                        children: const [
-                          SearchBox(),
-                          BodyPartsContainer(),
+                        children: [
+                          const SearchBox(),
+                          const BodyPartsContainer(),
+                          Pagination(
+                            numOfPages: controller.numOfPages,
+                            selectedPage: controller.currentPage,
+                            pagesVisible: controller.visiblePages,
+                            onPageChanged: (value) => controller.setPage(value),
+                            activeTextStyle:
+                                TextStyle(color: appColors.black20),
+                            activeBtnStyle: const ButtonStyle(),
+                            inactiveTextStyle: const TextStyle(),
+                            inactiveBtnStyle: const ButtonStyle(),
+                          ),
                         ],
                       ),
                     )

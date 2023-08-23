@@ -17,6 +17,7 @@ dependencies:
   get: ^4.6.5
   http: ^0.13.1
   avatar_glow: 1.2.0
+  pagination_flutter: ^0.0.8
 
 dev_dependencies:
   flutter_test:
